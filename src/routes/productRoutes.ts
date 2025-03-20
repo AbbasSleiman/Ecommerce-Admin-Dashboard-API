@@ -38,6 +38,26 @@ router.get("/get-product-by-id/:id", async (req: Request, res: Response) => {
   }
 });
 
+// Route to get product by Id
+router.get(
+  "/get-product-by-name/:name",
+  async (req: Request, res: Response) => {
+    try {
+      const { name } = req.params;
+
+      const result = await getProductByName(name);
+
+      if (result === undefined || null) {
+        res.status(404).send({ message: `Product with Id ${name} not Found` });
+      }
+
+      res.status(200).send(result);
+    } catch (error) {
+      res.status(400).send({ error });
+    }
+  }
+);
+
 // Route to add product
 router.post("/add-product", async (req: Request, res: Response) => {
   try {

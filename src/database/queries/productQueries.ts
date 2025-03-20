@@ -66,7 +66,7 @@ export const insertProduct = async (
   name: string,
   category: string,
   price: string
-) => {
+): Promise<IResult> => {
   try {
     const query = `INSERT INTO products (name, category, price) VALUES (? , ?, ?)`;
     const values = [name, category, price];
@@ -74,7 +74,7 @@ export const insertProduct = async (
     await pool.execute(query, values);
 
     return successObject;
-  } catch (error) {
+  } catch (error: any) {
     return error;
   }
 };
