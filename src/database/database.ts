@@ -14,5 +14,11 @@ export const pool = mysql
   .promise();
 
 export const successObject = {
+  success: true,
   message: "Succes",
+};
+
+export const notFoundObject = {
+  success: false,
+  message: "Not Found",
 };

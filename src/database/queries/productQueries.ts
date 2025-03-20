@@ -1,5 +1,6 @@
-import { QueryResult, RowDataPacket } from "mysql2";
-import { pool, successObject } from "../database";
+import { QueryResult } from "mysql2";
+import { notFoundObject, pool, successObject } from "../database";
+import { IResult } from "../../interfaces/results.interface";
 
 // Get All products in the database
 export const getProducts = async () => {
@@ -36,9 +37,27 @@ export const getProductById = async (id: number) => {
     ]);
 
     // return Object, not array
+    console.log(results[0 as keyof QueryResult]);
     return results[0 as keyof QueryResult];
   } catch (error) {
     return error;
+  }
+};
+
+// Check if Product Exists by Id
+export const checkProductExists = async (id: number) => {
+  try {
+    // using prepared statements to safeguard from SQL Injection
+    const [results] = await pool.query(`SELECT * FROM products WHERE id = ?`, [
+      id,
+    ]);
+
+    if (results[0 as keyof QueryResult] !== undefined || null) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
   }
 };
 
@@ -53,6 +72,7 @@ export const insertProduct = async (
     const values = [name, category, price];
 
     await pool.execute(query, values);
+
     return successObject;
   } catch (error) {
     return error;
@@ -65,28 +85,34 @@ export const updateProduct = async (
   name: string,
   category: string,
   price: string
-) => {
+): Promise<IResult> => {
   try {
-    const query =
-      "UPDATE `products` SET `name` = ?, `category` = ?, `price` = ? WHERE `id` = ?";
-    const values = [name, category, price, id];
+    if (await checkProductExists(id)) {
+      const query =
+        "UPDATE `products` SET `name` = ?, `category` = ?, `price` = ? WHERE `id` = ?";
+      const values = [name, category, price, id];
 
-    await pool.execute(query, values);
-    return successObject;
-  } catch (error) {
+      await pool.execute(query, values);
+      return successObject;
+    }
+    return notFoundObject;
+  } catch (error: any) {
     return error;
   }
 };
 
 // Delete Product in Database
-export const deleteProductById = async (id: number) => {
+export const deleteProductById = async (id: number): Promise<IResult> => {
   try {
-    const query = "DELETE FROM `products` WHERE `id` = ?";
-    const values = [id];
+    if (await checkProductExists(id)) {
+      const query = "DELETE FROM `products` WHERE `id` = ?";
+      const values = [id];
 
-    await pool.execute(query, values);
-    return successObject;
-  } catch (error) {
+      await pool.execute(query, values);
+      return successObject;
+    }
+    return notFoundObject;
+  } catch (error: any) {
     return error;
   }
 };
