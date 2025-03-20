@@ -1,6 +1,6 @@
 import { QueryResult } from "mysql2";
 import { notFoundObject, pool, successObject } from "../database";
-import { IResult } from "../../interfaces/results.interface";
+import { IResult } from "../../interfaces/result.interface";
 
 // Get All products in the database
 export const getProducts = async () => {
