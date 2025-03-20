@@ -3,7 +3,6 @@ import mysql from "mysql2";
 
 config();
 
-
 // pool of connections
 export const pool = mysql
   .createPool({
@@ -14,12 +13,6 @@ export const pool = mysql
   })
   .promise();
 
-export const getUsers = async () => {
-  try {
-    const [rows] = await pool.query("SELECT * FROM users");
-    console.log(rows);
-    return rows;
-  } catch (error) {
-    return error;
-  }
+export const successObject = {
+  message: "Succes",
 };
