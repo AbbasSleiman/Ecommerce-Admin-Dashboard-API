@@ -22,3 +22,8 @@ export const notFoundObject = {
   success: false,
   message: "Not Found",
 };
+
+export const userAlreadyExists = {
+  success: false,
+  message: "User already exists",
+}
